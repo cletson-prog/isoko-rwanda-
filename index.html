@@ -244,15 +244,14 @@ form.addEventListener("submit", async event => {
     document.querySelector('[data-category="all"]').click();
     document.getElementById("products").scrollIntoView({behavior:"smooth"});
   } catch (error) {
-    console.error("Listing publish failed:", error);
-    formMessage.textContent = error.code === "permission-denied"
-      ? "Firebase blocked this listing. The Firestore security rules need to be updated."
-      : error.message === "auth-required"
-      ? "Please create an account or sign in before publishing."
-      : "Could not publish the listing. Check your connection and Firestore rules, then try again.";
-  } finally {
-    publishBtn.disabled = false;
-  }
+  console.error("Listing publish failed:", error);
+  formMessage.hidden = false;
+  formMessage.textContent =
+    "Error: " + (error.code || "unknown") + " — " +
+    (error.message || "No details available");
+} finally {
+  publishBtn.disabled = false;
+}
 });
 document.getElementById("resetDemo").addEventListener("click", () => {
   if (confirm("Restore the four sample products in this browser? Online listings will not be deleted.")) {
