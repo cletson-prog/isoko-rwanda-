@@ -319,13 +319,12 @@ registerBtn.addEventListener("click", async () => {
     authPassword.value = "";
     showAuthMessage("Account created! You are signed in.");
   } catch (error) {
-    showAuthMessage(
-      error.code === "auth/email-already-in-use" ? "That email already has an account. Try signing in." :
-      error.code === "auth/weak-password" ? "Choose a stronger password (at least 6 characters)." :
-      error.code === "auth/invalid-email" ? "Please enter a valid email address." :
-      "Could not create your account. Check your connection and Firebase Authentication settings."
-    );
-  }
+  console.error("Listing publish failed:", error);
+  formMessage.hidden = false;
+  formMessage.textContent =
+    "Error: " + (error.code || "unknown") + " — " +
+    (error.message || "No details available");
+}
 });
 loginBtn.addEventListener("click", async () => {
   if (!authForm.reportValidity()) return;
