@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#116b45">
+<title>Isoko Rwanda</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f6f4;color:#18352b}
+header{background:#116b45;color:white;padding:22px 16px}
+header h1{margin:0}
+header p{line-height:1.5}
+.container{max-width:850px;margin:auto;padding:16px}
+section,.panel{margin-bottom:24px}
+.panel{background:white;padding:16px;border-radius:13px;border:1px solid #e1e9e3}
+h2{margin-top:0}
+input,select,textarea{width:100%;padding:12px;margin:6px 0 14px;border:1px solid #ccd8d0;border-radius:8px;font-size:16px;background:white}
+textarea{min-height:80px;resize:vertical}
+button{cursor:pointer;font-size:14px}
+.primary{background:#116b45;color:white;border:0;border-radius:8px;padding:12px 16px;font-weight:bold}
+.secondary{background:white;color:#116b45;border:1px solid #116b45;border-radius:8px;padding:10px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.filter{padding:9px 12px;border:1px solid #ccd8d0;border-radius:20px;background:white}
+.filter.active{background:#116b45;color:white}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:white;padding:13px;border-radius:12px;border:1px solid #e1e9e3;overflow-wrap:anywhere}
+.emoji{font-size:38px;background:#eaf4ed;text-align:center;padding:14px;border-radius:9px}
+.category{font-size:11px;color:#116b45;font-weight:bold;text-transform:uppercase}
+.price{color:#116b45;font-weight:bold}
+.small{font-size:13px;color:#65756b;line-height:1.5}
+.card button{margin-top:6px}
+.delete{color:#9c2e2e;background:white;border:1px solid #e0baba;border-radius:7px;padding:8px}
+.notice{background:#e7f5eb;padding:12px;border-radius:8px;font-size:13px;line-height:1.5}
+.empty{background:white;padding:20px;border-radius:10px;text-align:center;color:#65756b}
+footer{text-align:center;padding:20px;color:#65756b;font-size:12px;line-height:1.6}
+@media(max-width:340px){.products{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Isoko 🇷🇼</h1>
+  <p>Find construction materials. Discover local sellers.</p>
+</header>
+
+<main class="container">
+  <section class="panel">
+    <h2>🛍️ Find materials</h2>
+    <label for="search">Search products</label>
+    <input id="search" type="search" placeholder="Try cement or water pipes">
+
+    <strong>Categories</strong>
+    <div class="filters" id="filters">
+      <button class="filter active" data-category="all">All</button>
+      <button class="filter" data-category="cement">Cement</button>
+      <button class="filter" data-category="tools">Tools</button>
+      <button class="filter" data-category="roofing">Roofing</button>
+      <button class="filter" data-category="plumbing">Plumbing</button>
+      <button class="filter" data-category="other">Other</button>
+    </div>
+    <p class="small" id="count" aria-live="polite"></p>
+    <div class="products" id="products"></div>
+    <div id="empty" class="empty" hidden>
+      No products found. Try another search.
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>🏪 Sell on Isoko</h2>
+    <p class="small">Create a demo listing for a construction material.</p>
+
+    <form id="sellerForm">
+      <label for="productName">Product name *</label>
+      <input id="productName" maxlength="60" required
+        placeholder="e.g. Paint">
+
+      <label for="category">Category *</label>
+      <select id="category" required>
+        <option value="cement">Cement</option>
+        <option value="tools">Tools</option>
+        <option value="roofing">Roofing</option>
+        <option value="plumbing">Plumbing</option>
+        <option value="other">Other materials</option>
+      </select>
+
+      <label for="price">Price in RWF *</label>
+      <input id="price" type="number" min="1" max="100000000"
+        step="1" required placeholder="e.g. 18000">
+
+      <label for="sellerName">Seller or business name *</label>
+      <input id="sellerName" maxlength="60" required
+        placeholder="e.g. Sample Building Supplies">
+
+      <label for="phone">Seller phone number *</label>
+      <input id="phone" type="tel" maxlength="20" required
+        placeholder="e.g. 07XXXXXXXX">
+
+      <label for="description">Product description</label>
+      <textarea id="description" maxlength="250"
+        placeholder="Size, quality, quantity, etc."></textarea>
+
+      <button class="primary" type="submit">Add product</button>
+    </form>
+
+    <p id="formMessage" class="notice" hidden aria-live="polite"></p>
+  </section>
+
+
+<section class="panel">
+  <h2>🔐 Seller account</h2>
+  <p class="small">Create an account or sign in to Isoko Rwanda.</p>
+
+  <form id="authForm">
+    <label for="authEmail">Email address</label>
+    <input id="authEmail" type="email"
+      autocomplete="email" required
+      placeholder="you@example.com">
+
+    <label for="authPassword">Password (at least 6 characters)</label>
+    <input id="authPassword" type="password"
+      autocomplete="current-password" minlength="6"
+      required placeholder="Create or enter your password">
+
+    <button class="primary" type="button" id="registerBtn">
+      Create account
+    </button>
+    <button class="secondary" type="button" id="loginBtn">
+      Sign in
+    </button>
+    <button class="secondary" type="button" id="logoutBtn" hidden>
+      Sign out
+    </button>
+  </form>
+
+  <p id="authMessage" class="notice" hidden aria-live="polite"></p>
+</section>
+
+  <section class="panel">
+    <h2>📌 About this prototype</h2>
+    <p class="small">
+      Listings are saved on this browser using local storage.
+      They are not shared with other phones. Sample listings and
+      seller details are fictional. No payments or orders are processed.
+    </p>
+    <button id="resetDemo" class="secondary" type="button">
+      Reset demo products
+    </button>
+  </section>
+</main>
+
+<footer>
+  <strong>Isoko Rwanda</strong><br>
+  Connecting construction-material buyers and sellers.
+</footer>
+
+<script>
+const starterProducts = [
+  {id:"demo1",name:"Cement",category:"cement",price:12000,
+   seller:"Sample Seller",phone:"",description:"Building cement.",demo:true},
+  {id:"demo2",name:"Hand tools",category:"tools",price:8500,
+   seller:"Sample Seller",phone:"",description:"General construction tools.",demo:true},
+  {id:"demo3",name:"Roofing sheets",category:"roofing",price:15000,
+   seller:"Sample Seller",phone:"",description:"Roofing materials.",demo:true},
+  {id:"demo4",name:"Water pipes",category:"plumbing",price:6000,
+   seller:"Sample Seller",phone:"",description:"Water supply pipes.",demo:true}
+];
+
+const storageKey = "isoko_rwanda_products_v1";
+const search = document.getElementById("search");
+const productGrid = document.getElementById("products");
+const empty = document.getElementById("empty");
+const count = document.getElementById("count");
+const form = document.getElementById("sellerForm");
+const formMessage = document.getElementById("formMessage");
+let selectedCategory = "all";
+let products = loadProducts();
+
+
+function loadProducts() {
+  try {
+    const saved = localStorage.getItem(storageKey);
+
+    if (saved !== null) {
+      const parsed = JSON.parse(saved);
+
+      if (Array.isArray(parsed)) {
+        // Hide old or incomplete listings without deleting saved data.
+        return parsed.filter(product =>
+          product &&
+          typeof product.name === "string" &&
+          product.name.trim() !== ""
+        );
+      }
+    }
+  } catch (error) {
+    console.log("Could not load saved products.");
+  }
+
+  return starterProducts.map(product => ({...product}));
+}
+
+function saveProducts() {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(products));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function makeElement(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (text !== undefined) element.textContent = text;
+  return element;
+}
+
+function renderProducts() {
+  productGrid.replaceChildren();
+  const term = search.value.trim().toLowerCase();
+
+  const matching = products.filter(product => {
+    const searchable = [
+      product.name, product.description,
+      product.category, product.seller
+    ].join(" ").toLowerCase();
+
+    return searchable.includes(term) &&
+      (selectedCategory === "all" ||
+       product.category === selectedCategory);
+  });
+
+  count.textContent = "Showing " + matching.length +
+    (matching.length === 1 ? " product" : " products");
+
+  empty.hidden = matching.length !== 0;
+
+  matching.forEach(product => {
+    const card = makeElement("article", "card");
+    const emoji = {
+      cement:"🧱", tools:"🔨", roofing:"🏠",
+      plumbing:"🚰", other:"📦"
+    }[product.category] || "📦";
+
+    card.appendChild(makeElement("div","emoji",emoji));
+    card.appendChild(makeElement("p","category",product.category));
+    card.appendChild(makeElement("h3","",product.name));
+    card.appendChild(makeElement("p","price",
+      "RWF " + Number(product.price).toLocaleString("en-US")));
+    card.appendChild(makeElement("p","small",
+      product.description || "No description provided."));
+    card.appendChild(makeElement("p","small",
+      "Seller: " + product.seller));
+
+    const detailsButton = makeElement("button","primary","View details");
+    detailsButton.type = "button";
+    detailsButton.addEventListener("click", () => {
+      const message = product.name +
+        "\nPrice: RWF " + Number(product.price).toLocaleString("en-US") +
+        "\nSeller: " + product.seller +
+        (product.phone ? "\nPhone: " + product.phone : "") +
+        "\n\nDemo only. Verify sellers and prices before any purchase.";
+      alert(message);
+    });
+    card.appendChild(detailsButton);
+
+    if (!product.demo) {
+      const deleteButton = makeElement("button","delete","Delete my demo listing");
+      deleteButton.type = "button";
+      deleteButton.style.width = "100%";
+      deleteButton.addEventListener("click", () => {
+        if (confirm("Delete this listing from this browser?")) {
+          products = products.filter(p => p.id !== product.id);
+          saveProducts();
+          renderProducts();
+        }
+      });
+      card.appendChild(deleteButton);
+    }
+
+    productGrid.appendChild(card);
+  });
+}
+
+search.addEventListener("input", renderProducts);
+
+document.querySelectorAll(".filter").forEach(button => {
+  button.addEventListener("click", () => {
+    selectedCategory = button.dataset.category;
+
+    document.querySelectorAll(".filter").forEach(item => {
+      const active = item === button;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+
+    renderProducts();
+  });
+});
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const name = document.getElementById("productName").value.trim();
+  const category = document.getElementById("category").value;
+  const price = Number(document.getElementById("price").value);
+  const seller = document.getElementById("sellerName").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const description = document.getElementById("description").value.trim();
+
+  if (!name || !seller || !phone || !Number.isSafeInteger(price) ||
+      price < 1 || price > 100000000) {
+    formMessage.hidden = false;
+    formMessage.textContent = "Please check all required fields and enter a valid whole-number price.";
+    return;
+  }
+
+  const listing = {
+    id: "seller-" + Date.now() + "-" + Math.random().toString(36).slice(2,7),
+    name, category, price, seller, phone, description, demo:false
+  };
+
+  products.unshift(listing);
+  const saved = saveProducts();
+
+  selectedCategory = "all";
+  search.value = "";
+
+  document.querySelectorAll(".filter").forEach(button => {
+    const active = button.dataset.category === "all";
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+
+  renderProducts();
+  form.reset();
+
+  formMessage.hidden = false;
+  formMessage.textContent = saved
+    ? "Listing added! It is saved on this browser only, not published online."
+    : "Listing added for this session, but storage failed. It may disappear when the page closes.";
+
+  document.getElementById("products").scrollIntoView({behavior:"smooth"});
+});
+
+document.getElementById("resetDemo").addEventListener("click", () => {
+  if (confirm("Remove all added listings and restore the four sample products?")) {
+    products = starterProducts.map(p => ({...p}));
+    saveProducts();
+    search.value = "";
+    selectedCategory = "all";
+
+    document.querySelectorAll(".filter").forEach(button => {
+      const active = button.dataset.category === "all";
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+
+    formMessage.hidden = true;
+    renderProducts();
+  }
+});
+
+
+renderProducts();
+</script>
+
+
+<script type="module">
+  
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBjqKVTBTRytSWMIKnUbpL9MnSKEl3Boig",
+  authDomain: "isoko-rwanda.firebaseapp.com",
+  projectId: "isoko-rwanda",
+  storageBucket: "isoko-rwanda.firebasestorage.app",
+  messagingSenderId: "644800838770",
+  appId: "1:644800838770:web:59278346c8b9fec2a956eb"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const authForm = document.getElementById("authForm");
+const authEmail = document.getElementById("authEmail");
+const authPassword = document.getElementById("authPassword");
+const authMessage = document.getElementById("authMessage");
+const registerBtn = document.getElementById("registerBtn");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+function showAuthMessage(message) {
+  authMessage.textContent = message;
+  authMessage.hidden = false;
+}
+
+registerBtn.addEventListener("click", async () => {
+  if (!authForm.reportValidity()) return;
+
+  try {
+    await createUserWithEmailAndPassword(
+      auth,
+      authEmail.value.trim(),
+      authPassword.value
+    );
+
+    authPassword.value = "";
+    showAuthMessage("Account created! You are signed in.");
+  } catch (error) {
+    showAuthMessage(
+      error.code === "auth/email-already-in-use"
+        ? "That email already has an account. Try signing in."
+        : error.code === "auth/weak-password"
+        ? "Choose a stronger password."
+        : error.code === "auth/invalid-email"
+        ? "Please enter a valid email address."
+        : "Could not create your account. Check your connection and try again."
+    );
+  }
+});
+
+
+loginBtn.addEventListener("click", async () => {
+  if (!authForm.reportValidity()) return;
+
+  showAuthMessage("Signing in...");
+
+  try {
+    const result = await signInWithEmailAndPassword(
+  auth,
+  authEmail.value.trim(),
+  authPassword.value
+);
+
+    authPassword.value = "";
+
+    showAuthMessage(
+      "SUCCESS! Signed in as " + result.user.email
+    );
+
+  } catch (error) {
+    console.error("Firebase sign-in error:", error.code, error.message);
+
+    showAuthMessage(
+      "ERROR: " + error.code + " — " + error.message
+    );
+  }
+});
+
+logoutBtn.addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    showAuthMessage("You have signed out.");
+  } catch (error) {
+    showAuthMessage("Sign-out failed. Please try again.");
+  }
+});
+
+onAuthStateChanged(auth, (user) => {
+  registerBtn.hidden = !!user;
+  loginBtn.hidden = !!user;
+  logoutBtn.hidden = !user;
+
+  authEmail.disabled = !!user;
+  authPassword.disabled = !!user;
+
+  if (user) {
+    showAuthMessage("Signed in as " + user.email);
+  }
+});
+
+console.log("Isoko Firebase initialized!");
+
+getDocs(collection(db, "products"))
+  .then((snapshot) => {
+    const onlineProducts = snapshot.docs
+      .map((doc) => {
+        const data = doc.data();
+
+        return {
+          id: doc.id,
+          name: typeof data.name === "string"
+            ? data.name.trim() : "",
+          category: data.category || "other",
+          price: Number(data.price) || 0,
+          seller: data.seller || "Seller not provided",
+          phone: "",
+          description: data.description || "",
+          demo: true,
+          online: true
+        };
+      })
+      .filter(product => product.name !== "");
+
+    products = [
+      ...onlineProducts,
+      ...products.filter(product => !product.online)
+    ];
+
+    renderProducts();
+    console.log("Firestore connected! Products found:", snapshot.size);
+  })
+  .catch((error) => {
+    console.error("Firestore test failed:", error);
+  });
+</script>
+
+</body>
+</html>
