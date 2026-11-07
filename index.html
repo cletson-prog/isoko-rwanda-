@@ -330,10 +330,21 @@ window.publishListing = async function(listing) {
     throw error;
   }
 
-  if (!approvalSnap.exists() ||
-      approvalSnap.data().approved !== true) {
-    throw new Error("SELLER_NOT_APPROVED");
-  }
+  console.log("APPROVAL EXISTS:", approvalSnap.exists());
+console.log("APPROVAL DATA:", approvalSnap.data());
+console.log(
+  "APPROVED VALUE:",
+  approvalSnap.data()?.approved
+);
+console.log(
+  "APPROVED TYPE:",
+  typeof approvalSnap.data()?.approved
+);
+
+if (!approvalSnap.exists() ||
+    approvalSnap.data()?.approved !== true) {
+  throw new Error("SELLER_NOT_APPROVED");
+}
 
   // Then attempt to publish
   try {
