@@ -270,7 +270,15 @@ renderProducts();
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -298,19 +306,56 @@ function showAuthMessage(message) {
 }
 window.publishListing = async function(listing) {
   const user = auth.currentUser;
-  if (!user) throw new Error("auth-required");
-  return addDoc(collection(db, "products"), {
-    name: listing.name,
-    category: listing.category,
-    price: listing.price,
-    seller: listing.seller,
-    phone: listing.phone,
-    description: listing.description,
-    sellerId: user.uid,
-    createdAt: serverTimestamp()
-  });
-};
 
+  if (!user) throw new Error("auth-required");
+
+  console.log("SIGNED-IN UID:", user.uid);
+
+  // First, check seller approval
+  let approvalSnap;
+
+  try {
+    approvalSnap = await getDoc(
+      doc(db, "approvedSellers", user.uid)
+    );
+
+    console.log("APPROVAL DOCUMENT EXISTS:", approvalSnap.exists());
+
+    if (approvalSnap.exists()) {
+      console.log("APPROVAL DATA:", approvalSnap.data());
+    }
+
+  } catch (error) {
+    console.error("APPROVAL CHECK FAILED:", error);
+    throw error;
+  }
+
+  if (!approvalSnap.exists() ||
+      approvalSnap.data().approved !== true) {
+    throw new Error("SELLER_NOT_APPROVED");
+  }
+
+  // Then attempt to publish
+  try {
+    const result = await addDoc(collection(db, "products"), {
+      name: listing.name,
+      category: listing.category,
+      price: listing.price,
+      seller: listing.seller,
+      phone: listing.phone,
+      description: listing.description,
+      sellerId: user.uid,
+      createdAt: serverTimestamp()
+    });
+
+    console.log("PRODUCT PUBLISHED:", result.id);
+    return result;
+
+  } catch (error) {
+    console.error("PRODUCT CREATE FAILED:", error);
+    throw error;
+  }
+};
 registerBtn.addEventListener("click", async () => {
   if (!authForm.reportValidity()) return;
   try {
