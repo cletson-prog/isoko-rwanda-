@@ -1,442 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#116b45">
-<title>Isoko Rwanda</title>
+<title>Umusingi: building materials marketplace</title>
 <style>
+:root{--bg:#eceeef;--card:#fff;--ink:#1d2327;--muted:#59636b;--line:#cfd4d8;--accent:#f2b705;--deep:#0f4c5c;--bad:#a62020;--good:#17692f}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6f4;color:#18352b}
-header{background:#116b45;color:white;padding:22px 16px}
-header h1{margin:0}
-header p{line-height:1.5}
-.container{max-width:850px;margin:auto;padding:16px}
-section,.panel{margin-bottom:24px}
-.panel{background:white;padding:16px;border-radius:13px;border:1px solid #e1e9e3}
-h2{margin-top:0}
-input,select,textarea{width:100%;padding:12px;margin:6px 0 14px;border:1px solid #ccd8d0;border-radius:8px;font-size:16px;background:white}
+html,body{margin:0;background:#eceeef;color:#1d2327}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+header{background:var(--deep);color:#fff;padding:28px 16px 24px;border-bottom:6px solid var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header .wrap{padding:0}
+h1{margin:0 0 4px;font-size:2rem}
+header p{margin:0;opacity:.92}
+section{margin:24px 0}
+h2{font-size:1.25rem;margin:0 0 12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px}
+input,select,textarea,button{font:inherit}
+input,select,textarea{width:100%;padding:10px;border:1px solid #9aa3a9;border-radius:6px;background:#fff;color:var(--ink);margin-top:4px}
+label{display:block;font-weight:600;margin-bottom:12px}
 textarea{min-height:80px;resize:vertical}
-button{cursor:pointer;font-size:14px}
-button:disabled{opacity:.6;cursor:wait}
-.primary{background:#116b45;color:white;border:0;border-radius:8px;padding:12px 16px;font-weight:bold}
-.secondary{background:white;color:#116b45;border:1px solid #116b45;border-radius:8px;padding:10px}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.filter{padding:9px 12px;border:1px solid #ccd8d0;border-radius:20px;background:white}
-.filter.active{background:#116b45;color:white}
-.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.card{background:white;padding:13px;border-radius:12px;border:1px solid #e1e9e3;overflow-wrap:anywhere}
-.emoji{font-size:38px;background:#eaf4ed;text-align:center;padding:14px;border-radius:9px}
-.category{font-size:11px;color:#116b45;font-weight:bold;text-transform:uppercase}
-.price{color:#116b45;font-weight:bold}
-.small{font-size:13px;color:#65756b;line-height:1.5}
-.card button{margin-top:6px}
-.delete{color:#9c2e2e;background:white;border:1px solid #e0baba;border-radius:7px;padding:8px}
-.notice{background:#e7f5eb;padding:12px;border-radius:8px;font-size:13px;line-height:1.5}
-.empty{background:white;padding:20px;border-radius:10px;text-align:center;color:#65756b}
-footer{text-align:center;padding:20px;color:#65756b;font-size:12px;line-height:1.6}
-@media(max-width:480px){.products{grid-template-columns:1fr}}
+button{cursor:pointer;border:0;border-radius:6px;padding:10px 16px;font-weight:700;background:var(--accent);color:#1d2327}
+button.alt{background:#fff;border:1px solid #9aa3a9;font-weight:600}
+button.danger{background:#fff;border:1px solid var(--bad);color:var(--bad)}
+button:disabled{opacity:.6;cursor:default}
+:focus-visible{outline:3px solid var(--deep);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>input,.row>select{flex:1 1 200px;margin-top:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chips button{background:#fff;border:1px solid #9aa3a9;font-weight:600;padding:6px 14px;border-radius:999px}
+.chips button[aria-pressed="true"]{background:var(--deep);color:#fff;border-color:var(--deep)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.card img{width:100%;height:160px;object-fit:cover;border-radius:6px;background:#e4e7ea}
+.card h3{margin:0;font-size:1.1rem}
+.cat{font-size:.85rem;color:var(--muted);font-weight:600}
+.price{font-size:1.3rem;font-weight:800;color:var(--deep)}
+.tag{display:inline-block;font-size:.8rem;padding:1px 8px;border-radius:4px;background:#e4e7ea;color:var(--muted)}
+.tag.live{background:#d9f0e0;color:var(--good)}
+details summary{cursor:pointer;font-weight:700;color:var(--deep)}
+details .row{margin-top:8px}
+a.btn{display:inline-block;padding:8px 12px;border-radius:6px;background:var(--deep);color:#fff;text-decoration:none;font-weight:700}
+.msg{margin:10px 0 0;font-weight:600}
+.msg.err{color:var(--bad)}.msg.ok{color:var(--good)}
+.status{padding:10px 12px;border-radius:6px;background:#fff6d6;border:1px solid #e3c34b;margin-bottom:12px}
+.diag{font-size:.85rem;color:var(--muted);word-break:break-all;margin-top:8px}
+.mine{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.hidden{display:none}
+footer{padding:20px 16px 40px;color:var(--muted);font-size:.9rem}
 </style>
 </head>
 <body>
-<header>
-  <h1>Isoko 🇷🇼</h1>
-  <p>Find construction materials. Discover local sellers.</p>
-</header>
+<header><div class="wrap">
+  <h1>Umusingi</h1>
+  <p>Build on solid ground. Find building materials from local sellers anywhere in the world.</p>
+</div></header>
 
-<main class="container">
-  <section class="panel">
-    <h2>🛍️ Find materials</h2>
-    <label for="search">Search products</label>
-    <input id="search" type="search" placeholder="Try cement or water pipes">
-    <strong>Categories</strong>
-    <div class="filters" id="filters">
-      <button type="button" class="filter active" data-category="all">All</button>
-      <button type="button" class="filter" data-category="cement">Cement</button>
-      <button type="button" class="filter" data-category="tools">Tools</button>
-      <button type="button" class="filter" data-category="roofing">Roofing</button>
-      <button type="button" class="filter" data-category="plumbing">Plumbing</button>
-      <button type="button" class="filter" data-category="other">Other</button>
+<main class="wrap">
+
+<section aria-labelledby="browseH">
+  <h2 id="browseH">Browse materials</h2>
+  <div class="row">
+    <input id="search" type="search" placeholder="Search cement, pipes, tools, city…" aria-label="Search products">
+    <select id="countryFilter" aria-label="Filter by country"></select>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="Categories"></div>
+  <p id="countLine" class="msg" style="color:var(--muted)"></p>
+  <div class="grid" id="grid"></div>
+  <div class="row" style="margin-top:12px">
+    <button class="alt" id="toggleSamples" type="button">Hide sample products</button>
+  </div>
+</section>
+
+<section aria-labelledby="accountH">
+  <h2 id="accountH">Seller account</h2>
+  <div class="panel">
+    <div id="signedOut">
+      <label>Email<input id="email" type="email" autocomplete="email"></label>
+      <label>Password (at least 6 characters)<input id="password" type="password" autocomplete="current-password"></label>
+      <div class="row">
+        <button id="btnLogin" type="button">Sign in</button>
+        <button id="btnRegister" type="button" class="alt">Create account</button>
+      </div>
     </div>
-    <p class="small" id="count" aria-live="polite"></p>
-    <div class="products" id="products"></div>
-    <div id="empty" class="empty" hidden>No products found. Try another search.</div>
-  </section>
+    <div id="signedIn" class="hidden">
+      <p>Signed in as <strong id="who"></strong></p>
+      <button id="btnLogout" type="button" class="alt">Sign out</button>
+    </div>
+    <p id="authMessage" class="msg" role="status"></p>
+  </div>
+</section>
 
-  <section class="panel">
-    <h2>🏪 Sell on Isoko</h2>
-    <p class="small">Sign in to publish a listing that can be seen by visitors on other devices.</p>
-    <form id="sellerForm">
-      <label for="productName">Product name *</label>
-      <input id="productName" maxlength="60" required placeholder="e.g. Paint">
-      <label for="category">Category *</label>
-      <select id="category" required>
-        <option value="cement">Cement</option>
-        <option value="tools">Tools</option>
-        <option value="roofing">Roofing</option>
-        <option value="plumbing">Plumbing</option>
-        <option value="other">Other materials</option>
-      </select>
-      <label for="price">Price in RWF *</label>
-      <input id="price" type="number" min="1" max="100000000" step="1" required placeholder="e.g. 18000">
-      <label for="sellerName">Seller or business name *</label>
-      <input id="sellerName" maxlength="60" required placeholder="e.g. Sample Building Supplies">
-      <label for="phone">Seller phone number *</label>
-      <input id="phone" type="tel" maxlength="20" required placeholder="e.g. 07XXXXXXXX">
-      <label for="description">Product description</label>
-      <textarea id="description" maxlength="250" placeholder="Size, quality, quantity, etc."></textarea>
-      <button class="primary" id="publishBtn" type="submit">Publish product</button>
+<section aria-labelledby="sellH">
+  <h2 id="sellH">Sell a product</h2>
+  <div class="panel">
+    <div id="sellStatus" class="status">Sign in to sell on Umusingi.</div>
+    <form id="listingForm" class="hidden">
+      <label>Product name<input id="fName" maxlength="60" required></label>
+      <label>Category
+        <select id="fCategory">
+          <option value="cement">Cement</option><option value="tools">Tools</option>
+          <option value="roofing">Roofing</option><option value="plumbing">Plumbing</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <label>Country<select id="fCountry" required></select></label>
+      <label>City or area<input id="fCity" maxlength="40" required></label>
+      <label>Currency<select id="fCurrency"></select></label>
+      <label>Price (whole number)<input id="fPrice" type="number" min="1" max="100000000" step="1" inputmode="numeric" required></label>
+      <label>Seller or business name<input id="fSeller" maxlength="60" required></label>
+      <label>Phone with country code (for example +250 788 000 000)<input id="fPhone" type="tel" maxlength="20" placeholder="+250 788 000 000" required></label>
+      <label>Description (up to 250 characters)<textarea id="fDesc" maxlength="250"></textarea></label>
+      <label>Photo (optional)<input id="fPhoto" type="file" accept="image/*"></label>
+      <button type="submit" id="btnPublish">Publish product</button>
+      <p id="formMessage" class="msg" role="status"></p>
     </form>
-    <p id="formMessage" class="notice" hidden aria-live="polite"></p>
-  </section>
+    <div id="mineBox" class="hidden">
+      <h3>Your listings</h3>
+      <div id="mine"></div>
+    </div>
+    <p class="diag" id="diag"></p>
+  </div>
+</section>
 
-  <section class="panel">
-    <h2>🔐 Seller account</h2>
-    <p class="small">Create an account or sign in to Isoko Rwanda.</p>
-    <form id="authForm">
-      <label for="authEmail">Email address</label>
-      <input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
-      <label for="authPassword">Password (at least 6 characters)</label>
-      <input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Create or enter your password">
-      <button class="primary" type="button" id="registerBtn">Create account</button>
-      <button class="secondary" type="button" id="loginBtn">Sign in</button>
-      <button class="secondary" type="button" id="logoutBtn" hidden>Sign out</button>
-    </form>
-    <p id="authMessage" class="notice" hidden aria-live="polite"></p>
-  </section>
+<section aria-labelledby="aboutH">
+  <h2 id="aboutH">About Umusingi</h2>
+  <div class="panel">
+    <p>Umusingi connects people who need building materials with local sellers in any country. Approved sellers publish listings, and buyers contact them directly by phone or WhatsApp.</p>
+    <p>Sample listings are fictional. Verify sellers and prices before paying. This prototype does not process payments or orders.</p>
+  </div>
+</section>
 
-  <section class="panel">
-    <h2>📌 About Isoko Rwanda</h2>
-    <p class="small">Online listings are stored in Firebase Firestore and can be shared across devices. Sample listings are fictional. Verify sellers and prices before paying. This prototype does not process payments or orders.</p>
-    <button id="resetDemo" class="secondary" type="button">Restore sample products</button>
-    <p class="small">This only restores sample products in this browser; it does not delete online listings.</p>
-  </section>
 </main>
-
-<footer><strong>Isoko Rwanda</strong><br>Connecting construction-material buyers and sellers.</footer>
-
-<script>
-const starterProducts = [
-  {id:"demo1",name:"Cement",category:"cement",price:12000,seller:"Sample Seller",phone:"",description:"Building cement.",demo:true},
-  {id:"demo2",name:"Hand tools",category:"tools",price:8500,seller:"Sample Seller",phone:"",description:"General construction tools.",demo:true},
-  {id:"demo3",name:"Roofing sheets",category:"roofing",price:15000,seller:"Sample Seller",phone:"",description:"Roofing materials.",demo:true},
-  {id:"demo4",name:"Water pipes",category:"plumbing",price:6000,seller:"Sample Seller",phone:"",description:"Water supply pipes.",demo:true}
-];
-const storageKey = "isoko_rwanda_products_v1";
-const search = document.getElementById("search");
-const productGrid = document.getElementById("products");
-const empty = document.getElementById("empty");
-const count = document.getElementById("count");
-const form = document.getElementById("sellerForm");
-const formMessage = document.getElementById("formMessage");
-const publishBtn = document.getElementById("publishBtn");
-let selectedCategory = "all";
-let products = loadProducts();
-
-function loadProducts() {
-  try {
-    const saved = localStorage.getItem(storageKey);
-    if (saved !== null) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
-        return parsed.filter(p => p && typeof p.name === "string" && p.name.trim());
-      }
-    }
-  } catch (error) { console.warn("Could not load browser-saved products.", error); }
-  return starterProducts.map(p => ({...p}));
-}
-function saveProducts() {
-  try { localStorage.setItem(storageKey, JSON.stringify(products)); return true; }
-  catch (error) { return false; }
-}
-function makeElement(tag, className, text) {
-  const element = document.createElement(tag);
-  if (className) element.className = className;
-  if (text !== undefined) element.textContent = text;
-  return element;
-}
-function renderProducts() {
-  productGrid.replaceChildren();
-  const term = search.value.trim().toLowerCase();
-  const matching = products.filter(product => {
-    const searchable = [product.name, product.description, product.category, product.seller].join(" ").toLowerCase();
-    return searchable.includes(term) && (selectedCategory === "all" || product.category === selectedCategory);
-  });
-  count.textContent = "Showing " + matching.length + (matching.length === 1 ? " product" : " products");
-  empty.hidden = matching.length !== 0;
-  matching.forEach(product => {
-    const card = makeElement("article", "card");
-    const emoji = {cement:"🧱",tools:"🔨",roofing:"🏠",plumbing:"🚰",other:"📦"}[product.category] || "📦";
-    card.appendChild(makeElement("div","emoji",emoji));
-    card.appendChild(makeElement("p","category",product.category || "other"));
-    card.appendChild(makeElement("h3","",product.name));
-    card.appendChild(makeElement("p","price","RWF " + Number(product.price).toLocaleString("en-US")));
-    card.appendChild(makeElement("p","small",product.description || "No description provided."));
-    card.appendChild(makeElement("p","small","Seller: " + (product.seller || "Seller not provided")));
-    const detailsButton = makeElement("button","primary","View details");
-    detailsButton.type = "button";
-    detailsButton.addEventListener("click", () => {
-      alert(product.name + "\nPrice: RWF " + Number(product.price).toLocaleString("en-US") +
-        "\nSeller: " + (product.seller || "Seller not provided") +
-        (product.phone ? "\nPhone: " + product.phone : "") +
-        "\n\nVerify seller details and price before any purchase.");
-    });
-    card.appendChild(detailsButton);
-    if (product.localOnly && !product.online) {
-      const deleteButton = makeElement("button","delete","Remove browser-only listing");
-      deleteButton.type = "button";
-      deleteButton.style.width = "100%";
-      deleteButton.addEventListener("click", () => {
-        if (confirm("Remove this browser-only listing?")) {
-          products = products.filter(p => p.id !== product.id);
-          saveProducts();
-          renderProducts();
-        }
-      });
-      card.appendChild(deleteButton);
-    }
-    if (product.online) card.appendChild(makeElement("p","small","Published online"));
-    productGrid.appendChild(card);
-  });
-}
-search.addEventListener("input", renderProducts);
-document.querySelectorAll(".filter").forEach(button => {
-  button.addEventListener("click", () => {
-    selectedCategory = button.dataset.category;
-    document.querySelectorAll(".filter").forEach(item => {
-      const active = item === button;
-      item.classList.toggle("active", active);
-      item.setAttribute("aria-pressed", String(active));
-    });
-    renderProducts();
-  });
-});
-form.addEventListener("submit", async event => {
-  event.preventDefault();
-  const name = document.getElementById("productName").value.trim();
-  const category = document.getElementById("category").value;
-  const price = Number(document.getElementById("price").value);
-  const seller = document.getElementById("sellerName").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const description = document.getElementById("description").value.trim();
-
-  if (!name || name.length > 60 || !seller || seller.length > 60 ||
-      !phone || phone.length > 20 || description.length > 250 ||
-      !Number.isSafeInteger(price) || price < 1 || price > 100000000) {
-    formMessage.hidden = false;
-    formMessage.textContent = "Please check all fields and enter a valid whole-number price.";
-    return;
-  }
-  if (typeof window.publishListing !== "function") {
-    formMessage.hidden = false;
-    formMessage.textContent = "Firebase is not ready. Refresh the page and try again.";
-    return;
-  }
-  publishBtn.disabled = true;
-  formMessage.hidden = false;
-  formMessage.textContent = "Publishing your listing...";
-  try {
-    await window.publishListing({name,category,price,seller,phone,description});
-    form.reset();
-    formMessage.textContent = "Listing published online successfully!";
-    selectedCategory = "all";
-    search.value = "";
-    document.querySelector('[data-category="all"]').click();
-    document.getElementById("products").scrollIntoView({behavior:"smooth"});
-  } catch (error) {
-  console.error("Listing publish failed:", error);
-  formMessage.hidden = false;
-  formMessage.textContent =
-    "Error: " + (error.code || "unknown") + " — " +
-    (error.message || "No details available");
-} finally {
-  publishBtn.disabled = false;
-}
-});
-document.getElementById("resetDemo").addEventListener("click", () => {
-  if (confirm("Restore the four sample products in this browser? Online listings will not be deleted.")) {
-    products = products.filter(p => p.online);
-    products = [...products, ...starterProducts.map(p => ({...p}))];
-    saveProducts();
-    search.value = "";
-    selectedCategory = "all";
-    document.querySelector('[data-category="all"]').click();
-    formMessage.hidden = true;
-    renderProducts();
-  }
-});
-renderProducts();
-</script>
+<footer class="wrap">Online listings are stored in Firebase Firestore and are shared across devices.</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  serverTimestamp,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
+/* ===== STEP 1: PASTE YOUR FIREBASE CONFIG HERE =====
+   Firebase Console > Project settings > General > Your apps > Web app > Config. */
 const firebaseConfig = {
-  apiKey: "AIzaSyBjqKVTBTRytSWMIKnUbpL9MnSKEl3Boig",
+  apiKey: "PASTE_API_KEY_HERE",
   authDomain: "isoko-rwanda.firebaseapp.com",
   projectId: "isoko-rwanda",
   storageBucket: "isoko-rwanda.firebasestorage.app",
-  messagingSenderId: "644800838770",
-  appId: "1:644800838770:web:59278346c8b9fec2a956eb"
+  messagingSenderId: "PASTE_SENDER_ID_HERE",
+  appId: "PASTE_APP_ID_HERE"
 };
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-  console.log("Firebase project:", app.options.projectId);
-const authForm = document.getElementById("authForm");
-const authEmail = document.getElementById("authEmail");
-const authPassword = document.getElementById("authPassword");
-const authMessage = document.getElementById("authMessage");
-const registerBtn = document.getElementById("registerBtn");
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
 
-function showAuthMessage(message) {
-  authMessage.textContent = message;
-  authMessage.hidden = false;
+const $ = id => document.getElementById(id);
+const CATS = [["all","All"],["cement","Cement"],["tools","Tools"],["roofing","Roofing"],["plumbing","Plumbing"],["other","Other"]];
+const COUNTRY_CODES = "AD AE AF AG AL AM AO AR AT AU AZ BA BB BD BE BF BG BH BI BJ BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CL CM CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FM FR GA GB GD GE GH GM GN GQ GR GT GW GY HN HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KI KM KN KP KR KW KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MG MH MK ML MM MN MR MT MU MV MW MX MY MZ NA NE NG NI NL NO NP NR NZ OM PA PE PG PH PK PL PS PT PW PY QA RO RS RU RW SA SB SC SD SE SG SI SK SL SM SN SO SR SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TV TW TZ UA UG US UY UZ VA VC VE VN VU WS XK YE ZA ZM ZW".split(" ");
+const CURRENCIES = ["RWF","USD","EUR","GBP","KES","UGX","TZS","BIF","CDF","ETB","NGN","GHS","ZAR","XOF","XAF","EGP","MAD","AED","SAR","INR","PKR","BDT","CNY","JPY","KRW","IDR","PHP","VND","THB","MYR","SGD","AUD","NZD","CAD","MXN","BRL","ARS","CLP","COP","TRY","RUB","CHF","SEK","NOK","DKK","PLN"];
+let regionNames; try { regionNames = new Intl.DisplayNames(["en"], {type:"region"}); } catch (e) { regionNames = {of:c => c}; }
+const countryName = c => { try { return regionNames.of(c) || c; } catch (e) { return c; } };
+const COUNTRIES = COUNTRY_CODES.map(c => [c, countryName(c)]).sort((a, b) => a[1].localeCompare(b[1]));
+const fmtPrice = p => (p.currency || "RWF") + " " + Number(p.price).toLocaleString("en-US");
+const SAMPLES = [
+  {name:"Building cement",category:"cement",price:12000,currency:"RWF",seller:"Sample Seller",phone:"",country:"RW",city:"Kigali",description:"50 kg bag of general-purpose cement.",sample:true},
+  {name:"Hand tools set",category:"tools",price:3500,currency:"KES",seller:"Sample Seller",phone:"",country:"KE",city:"Nairobi",description:"Hammer, trowel and spirit level.",sample:true},
+  {name:"Roofing sheets",category:"roofing",price:9000,currency:"NGN",seller:"Sample Seller",phone:"",country:"NG",city:"Lagos",description:"Pre-painted iron sheets, per sheet.",sample:true},
+  {name:"Water pipes",category:"plumbing",price:12,currency:"USD",seller:"Sample Seller",phone:"",country:"US",city:"Austin",description:"PVC water pipe, 3 m length.",sample:true}
+];
+
+let online = [], showSamples = true, activeCat = "all", user = null;
+
+function el(tag, props = {}, ...kids){
+  const n = document.createElement(tag);
+  for (const k in props){ if (k === "class") n.className = props[k]; else n[k] = props[k]; }
+  kids.forEach(c => n.append(c));
+  return n;
 }
-window.publishListing = async function(listing) {
-  const user = auth.currentUser;
+function say(id, text, kind){ const m = $(id); m.textContent = text; m.className = "msg" + (kind ? " " + kind : ""); }
+function waNumber(p){ let d = String(p || "").replace(/\D/g, ""); if (d.startsWith("0")) d = "250" + d.slice(1); return d; }
 
-  if (!user) throw new Error("auth-required");
+/* ---------- Browse ---------- */
+function fillCountries(sel, withAll){
+  sel.replaceChildren(el("option", {value: withAll ? "all" : ""}, withAll ? "All countries" : "Choose country"),
+    ...COUNTRIES.map(([c, n]) => el("option", {value:c}, n)));
+}
+fillCountries($("countryFilter"), true);
+fillCountries($("fCountry"), false);
+$("fCurrency").replaceChildren(...CURRENCIES.map(c => el("option", {value:c}, c)));
 
-  console.log("SIGNED-IN UID:", user.uid);
+function card(p){
+  const c = el("article", {class:"card"});
+  if (p.image) c.append(el("img", {src:p.image, alt:p.name, loading:"lazy"}));
+  c.append(el("span", {class:"cat"}, (CATS.find(x => x[0] === p.category) || [0,"Other"])[1] + " · " + (p.city ? p.city + ", " : "") + countryName(p.country || "RW")));
+  c.append(el("h3", {}, p.name));
+  c.append(el("div", {class:"price"}, fmtPrice(p)));
+  c.append(el("div", {}, el("span", {class:"tag" + (p.sample ? "" : " live")}, p.sample ? "Sample" : "Online listing")));
+  c.append(el("div", {}, "Seller: " + p.seller));
+  const d = el("details");
+  d.append(el("summary", {}, "View details"));
+  d.append(el("p", {}, p.description || "No description provided."));
+  if (p.phone){
+    const r = el("div", {class:"row"});
+    r.append(el("a", {class:"btn", href:"tel:" + p.phone.replace(/[^\d+]/g, "")}, "Call"));
+    r.append(el("a", {class:"btn", href:"https://wa.me/" + waNumber(p.phone), target:"_blank", rel:"noopener"}, "WhatsApp"));
+    d.append(r);
+  } else d.append(el("p", {class:"cat"}, "Sample listing: no contact details."));
+  if (!p.sample){
+    const rb = el("button", {type:"button", class:"alt"}, "Report listing");
+    rb.onclick = () => reportListing(p, rb);
+    d.append(el("div", {class:"row"}, rb));
+  }
+  c.append(d);
+  return c;
+}
+function render(){
+  const q = $("search").value.trim().toLowerCase(), dist = $("countryFilter").value;
+  const list = [...online, ...(showSamples ? SAMPLES : [])].filter(p =>
+    (activeCat === "all" || p.category === activeCat) &&
+    (dist === "all" || (p.country || "RW") === dist) &&
+    (!q || (p.name + " " + p.description + " " + p.seller + " " + (p.city || "")).toLowerCase().includes(q)));
+  $("grid").replaceChildren(...list.map(card));
+  $("countLine").textContent = list.length ? list.length + " product" + (list.length === 1 ? "" : "s") + " shown" : "No products match. Try another search, category or country.";
+  $("toggleSamples").textContent = showSamples ? "Hide sample products" : "Show sample products";
+  renderMine();
+}
+function drawChips(){
+  $("chips").replaceChildren(...CATS.map(([v, l]) => {
+    const b = el("button", {type:"button"}, l);
+    b.setAttribute("aria-pressed", String(v === activeCat));
+    b.onclick = () => { activeCat = v; drawChips(); render(); };
+    return b;
+  }));
+}
+$("search").addEventListener("input", render);
+$("countryFilter").addEventListener("change", render);
+$("toggleSamples").onclick = () => { showSamples = !showSamples; render(); };
+drawChips(); render();
 
-  // First, check seller approval
-  let approvalSnap;
+/* ---------- Firebase ---------- */
+const configMissing = Object.values(firebaseConfig).some(v => String(v).startsWith("PASTE_"));
+let app, auth, db;
+if (configMissing){
+  say("authMessage", "Setup needed: paste your Firebase config into index.html (Step 1). Sample products still work.", "err");
+} else {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  loadProducts();
+  onAuthStateChanged(auth, async u => { user = u; await refreshApproval(); render(); });
+}
 
+async function loadProducts(){
   try {
-    approvalSnap = await getDoc(
-      doc(db, "approvedSellers", user.uid)
-    );
+    const snap = await getDocs(collection(db, "products"));
+    online = snap.docs.map(d => ({id:d.id, ...d.data()}))
+      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    render();
+  } catch (e) {
+    console.error("Loading products failed:", e);
+    $("countLine").textContent = "Online listings could not be loaded (" + (e.code || e.message) + ").";
+  }
+}
 
-    console.log("APPROVAL DOCUMENT EXISTS:", approvalSnap.exists());
-
-    if (approvalSnap.exists()) {
-      console.log("APPROVAL DATA:", approvalSnap.data());
+async function checkApproval(u){
+  const ref = doc(db, "approvedSellers", u.uid);
+  const snap = await getDoc(ref);
+  return {exists: snap.exists(), ok: snap.exists() && snap.data().approved === true, path: ref.path};
+}
+async function refreshApproval(){
+  $("signedOut").classList.toggle("hidden", !!user);
+  $("signedIn").classList.toggle("hidden", !user);
+  $("listingForm").classList.add("hidden");
+  const st = $("sellStatus"), dg = $("diag");
+  if (!user){ st.textContent = "Sign in to sell on Umusingi."; dg.textContent = ""; return; }
+  $("who").textContent = user.email;
+  try {
+    const r = await checkApproval(user);
+    dg.textContent = "Check: project " + app.options.projectId + " · path " + r.path + " · document found: " + (r.exists ? "yes" : "no");
+    if (r.ok){
+      st.textContent = "Your seller account is approved. You can publish products.";
+      $("listingForm").classList.remove("hidden");
+    } else {
+      st.textContent = "Your account is waiting for approval. Send your account ID below to the Umusingi team.";
+      dg.textContent += " · Account ID: " + user.uid;
     }
-
-  } catch (error) {
-    console.error("APPROVAL CHECK FAILED:", error);
-    throw error;
+  } catch (e) {
+    console.error("Approval check failed:", e);
+    st.textContent = "Could not check approval: " + (e.code || e.message);
+    dg.textContent = "Project " + app.options.projectId + " · Account ID: " + user.uid;
   }
-
-  console.log("APPROVAL EXISTS:", approvalSnap.exists());
-console.log("APPROVAL DATA:", approvalSnap.data());
-console.log(
-  "APPROVED VALUE:",
-  approvalSnap.data()?.approved
-);
-console.log(
-  "APPROVED TYPE:",
-  typeof approvalSnap.data()?.approved
-);
-
-if (!approvalSnap.exists() ||
-    approvalSnap.data()?.approved !== true) {
-  throw new Error("SELLER_NOT_APPROVED");
 }
 
-  // Then attempt to publish
-  try {
-    const result = await addDoc(collection(db, "products"), {
-      name: listing.name,
-      category: listing.category,
-      price: listing.price,
-      seller: listing.seller,
-      phone: listing.phone,
-      description: listing.description,
-      sellerId: user.uid,
-      createdAt: serverTimestamp()
-    });
-
-    console.log("PRODUCT PUBLISHED:", result.id);
-    return result;
-
-  } catch (error) {
-    console.error("PRODUCT CREATE FAILED:", error);
-    throw error;
-  }
-};
-registerBtn.addEventListener("click", async () => {
-  if (!authForm.reportValidity()) return;
-  try {
-    await createUserWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value);
-    authPassword.value = "";
-    showAuthMessage("Account created! You are signed in.");
-  } catch (error) {
-  console.error("Listing publish failed:", error);
-  formMessage.hidden = false;
-  formMessage.textContent =
-    "Error: " + (error.code || "unknown") + " — " +
-    (error.message || "No details available");
+/* ---------- Account ---------- */
+function authError(e){
+  const m = {"auth/invalid-credential":"Wrong email or password.","auth/email-already-in-use":"This email already has an account. Sign in instead.","auth/weak-password":"Password must be at least 6 characters.","auth/invalid-email":"Enter a valid email address.","auth/network-request-failed":"No internet connection."};
+  return m[e.code] || ("Could not complete this action (" + (e.code || e.message) + ").");
 }
-});
-loginBtn.addEventListener("click", async () => {
-  if (!authForm.reportValidity()) return;
-  showAuthMessage("Signing in...");
-  try {
-    const result = await signInWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value);
-    authPassword.value = "";
-    showAuthMessage("Signed in as " + result.user.email);
-  } catch (error) {
-    console.error("Firebase sign-in error:", error);
-    showAuthMessage(
-      error.code === "auth/invalid-credential" || error.code === "auth/wrong-password"
-        ? "Email or password is incorrect. Try again."
-        : "Sign-in failed. Check your connection and Firebase Authentication settings."
-    );
-  }
-});
-logoutBtn.addEventListener("click", async () => {
-  try { await signOut(auth); showAuthMessage("You have signed out."); }
-  catch (error) { showAuthMessage("Sign-out failed. Please try again."); }
-});
-onAuthStateChanged(auth, user => {
-  registerBtn.hidden = !!user;
-  loginBtn.hidden = !!user;
-  logoutBtn.hidden = !user;
-  authEmail.disabled = !!user;
-  authPassword.disabled = !!user;
-  if (user) showAuthMessage("Signed in as " + user.email);
-});
+async function authAction(fn){
+  say("authMessage", "");
+  if (configMissing){ say("authMessage", "Setup needed: add your Firebase config first.", "err"); return; }
+  try { await fn(auth, $("email").value.trim(), $("password").value); $("password").value = ""; }
+  catch (e) { console.error(e); say("authMessage", authError(e), "err"); }
+}
+$("btnLogin").onclick = () => authAction(signInWithEmailAndPassword);
+$("btnRegister").onclick = () => authAction(createUserWithEmailAndPassword);
+$("btnLogout").onclick = () => signOut(auth);
 
-try {
-  const snapshot = await getDocs(collection(db, "products"));
-  const onlineProducts = snapshot.docs.map(docSnap => {
-    const data = docSnap.data();
-    // Accept both the current lowercase schema and the older sample's capitalized field names.
-    const name = data.name ?? data.Name ?? "";
-    return {
-      id: docSnap.id,
-      name: typeof name === "string" ? name.trim() : "",
-      category: String(data.category ?? data.Category ?? "other").toLowerCase(),
-      price: Number(data.price ?? data.Price) || 0,
-      seller: data.seller ?? data.Seller ?? "Seller not provided",
-      phone: data.phone ?? "",
-      description: data.description ?? data.Description ?? "",
-      demo: false,
-      online: true
+/* ---------- Photos: shrink in the browser, store as text ---------- */
+function shrinkPhoto(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const s = Math.min(1, 640 / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(img.width * s); cv.height = Math.round(img.height * s);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      for (const q of [0.7, 0.55, 0.4, 0.3]){
+        const out = cv.toDataURL("image/jpeg", q);
+        if (out.length <= 140000) return resolve(out);
+      }
+      reject(new Error("photo-too-large"));
     };
-  }).filter(p => p.name);
-  products = [...onlineProducts, ...products.filter(p => !p.online)];
-  renderProducts();
-  console.log("Firestore connected. Online products found:", snapshot.size);
-} catch (error) {
-  console.error("Firestore read failed:", error);
-  const message = document.getElementById("formMessage");
-  message.hidden = false;
-  message.textContent = "Could not load online listings. Check your Firestore database and read rules.";
+    img.onerror = () => reject(new Error("photo-unreadable"));
+    img.src = url;
+  });
+}
+
+/* ---------- Publish ---------- */
+$("listingForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const btn = $("btnPublish");
+  say("formMessage", "");
+  const price = Number($("fPrice").value);
+  if (!Number.isInteger(price) || price < 1){ say("formMessage", "Enter the price as a whole number.", "err"); return; }
+  const phone = $("fPhone").value.replace(/[\s-]/g, "");
+  if (!/^\+\d{7,15}$/.test(phone)){ say("formMessage", "Enter the phone number with country code, for example +250788000000.", "err"); return; }
+  if (!$("fCountry").value){ say("formMessage", "Choose a country.", "err"); return; }
+  btn.disabled = true;
+  try {
+    const u = auth.currentUser;
+    if (!u) throw new Error("auth-required");
+    if (!(await checkApproval(u)).ok) throw new Error("SELLER_NOT_APPROVED");
+    const data = {
+      name: $("fName").value.trim(), category: $("fCategory").value, price,
+      seller: $("fSeller").value.trim(), phone,
+      description: $("fDesc").value.trim(), country: $("fCountry").value, city: $("fCity").value.trim(), currency: $("fCurrency").value,
+      sellerId: u.uid, createdAt: serverTimestamp()
+    };
+    const f = $("fPhoto").files[0];
+    if (f) data.image = await shrinkPhoto(f);
+    await addDoc(collection(db, "products"), data);
+    say("formMessage", "Published. Your product is now online.", "ok");
+    ev.target.reset();
+    await loadProducts();
+  } catch (e) {
+    console.error("Publish failed:", e);
+    say("formMessage",
+      e.message === "SELLER_NOT_APPROVED" ? "Your account is not approved yet."
+      : e.message === "photo-too-large" ? "That photo is too large. Try a smaller one."
+      : e.message === "photo-unreadable" ? "That file could not be read as a photo."
+      : e.code === "permission-denied" ? "The database rejected this listing. Check the fields and your approval."
+      : "Could not publish (" + (e.code || e.message) + ").", "err");
+  } finally { btn.disabled = false; }
+});
+
+/* ---------- Your listings ---------- */
+function renderMine(){
+  const mine = user ? online.filter(p => p.sellerId === user.uid) : [];
+  $("mineBox").classList.toggle("hidden", !mine.length);
+  $("mine").replaceChildren(...mine.map(p => {
+    const b = el("button", {type:"button", class:"danger"}, "Delete");
+    b.onclick = async () => {
+      if (!confirm("Delete “" + p.name + "”? This cannot be undone.")) return;
+      b.disabled = true;
+      try { await deleteDoc(doc(db, "products", p.id)); await loadProducts(); }
+      catch (e) { console.error(e); b.disabled = false; alert("Could not delete (" + (e.code || e.message) + ")."); }
+    };
+    return el("div", {class:"mine"}, el("span", {}, p.name + " — " + fmtPrice(p)), b);
+  }));
+}
+
+/* ---------- Report a listing ---------- */
+async function reportListing(p, btn){
+  if (!user){ alert("Sign in to report a listing."); return; }
+  const reason = prompt("What is wrong with this listing? (up to 200 characters)");
+  if (!reason || !reason.trim()) return;
+  btn.disabled = true;
+  try {
+    await addDoc(collection(db, "reports"), {
+      productId: p.id, reason: reason.trim().slice(0, 200), reporterId: user.uid, createdAt: serverTimestamp()
+    });
+    btn.textContent = "Reported. Thank you.";
+  } catch (e) { console.error(e); btn.disabled = false; alert("Could not send the report (" + (e.code || e.message) + ")."); }
 }
 </script>
 </body>
