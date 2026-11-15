@@ -55,6 +55,7 @@ footer{padding:20px 16px 40px;color:var(--muted);font-size:.9rem}
 <header><div class="wrap">
   <h1>Umusingi</h1>
   <p>Build on solid ground. Find building materials from local sellers anywhere in the world.</p>
+  <p style="margin-top:10px"><a href="#accountH" style="color:#fff;font-weight:700">Sign in or create a seller account</a></p>
 </div></header>
 
 <main class="wrap">
@@ -82,6 +83,10 @@ footer{padding:20px 16px 40px;color:var(--muted);font-size:.9rem}
       <div class="row">
         <button id="btnLogin" type="button">Sign in</button>
         <button id="btnRegister" type="button" class="alt">Create account</button>
+        <button id="btnReset" type="button" class="alt">Forgot password</button>
+</div>
+<div class="row" style="margin-top:12px">
+<button id="btnGoogle" type="button" class="alt">Continue with Google</button>
       </div>
     </div>
     <div id="signedIn" class="hidden">
@@ -137,7 +142,7 @@ footer{padding:20px 16px 40px;color:var(--muted);font-size:.9rem}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 /* ===== STEP 1: PASTE YOUR FIREBASE CONFIG HERE =====
@@ -301,7 +306,22 @@ async function authAction(fn){
   catch (e) { console.error(e); say("authMessage", authError(e), "err"); }
 }
 $("btnLogin").onclick = () => authAction(signInWithEmailAndPassword);
-$("btnRegister").onclick = () => authAction(createUserWithEmailAndPassword);
+$("btnRegister").onclick = () => authAction(async (a, e, p) => {
+  const cred = await createUserWithEmailAndPassword(a, e, p);
+  try { await sendEmailVerification(cred.user); say("authMessage", "Account created. We sent a verification email to " + e + ".", "ok"); } catch (x) { console.error(x); }
+});
+$("btnReset").onclick = async () => {
+  if (configMissing) return;
+  const e = $("email").value.trim();
+  if (!e){ say("authMessage", "Type your email above first, then tap Forgot password.", "err"); return; }
+  try { await sendPasswordResetEmail(auth, e); say("authMessage", "Password reset email sent to " + e + ". Check your inbox and spam.", "ok"); }
+  catch (x) { console.error(x); say("authMessage", authError(x), "err"); }
+};
+$("btnGoogle").onclick = async () => {
+  if (configMissing){ say("authMessage", "Setup needed: add your Firebase config first.", "err"); return; }
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch (x) { console.error(x); say("authMessage", x.code === "auth/popup-closed-by-user" ? "Google sign-in was closed." : authError(x), "err"); }
+};
 $("btnLogout").onclick = () => signOut(auth);
 
 /* ---------- Photos: shrink in the browser, store as text ---------- */
